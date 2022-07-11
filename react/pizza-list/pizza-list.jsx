@@ -1,52 +1,65 @@
 import React from 'react';
 
-// Start to implement a stateless react component.
-// Stateless components in react are simple functions, which return html
 const PizzaList = ({ pizzaOffers, friends, onClickCallback }) => {
     return (
         <ul>
-            {pizzaOffers.map((pizza) => {
-                return <li>{pizza.name}</li>
+            {pizzaOffers.map(pizza => {
+                return <li onClick={onClickCallback(pizza, friends)}>{pizza.name}</li>
             })}
         </ul>
     )
 }
 
 function printPizzaFans(friends, pizzaOffers) {
-    const pizzaFans = [];
-    
-    friends.forEach((friend) => {
-        let pizzas = [];
-        let mostPreferences = 0;
+    return friends.map(friend => {
+        const favouritePizza = [];
 
-        pizzaOffers.forEach((pizza) => {
-            const isANoGo = pizza.toppings.some((topping) => friend.noGos.includes(topping));
-            const numPreferences = preferences.filter((preference) => toppings.includes(preference)).length
+        let mostPrefs = 0;
+
+        pizzaOffers.forEach(pizza => {
+            const isANoGo = pizza.toppings.some(topping => friend.noGos.includes(topping));
 
             if(!isANoGo) {
-                if(numPreferences > mostPreferences) {
-                    pizzas = [];
-                    
-                    pizzas.push(pizza.name);
+                const numPrefs = friend.preferences.filter(preference => pizza.toppings.includes(preference)).length
 
-                    mostPreferences = numPreferences;
+                if(numPrefs > mostPrefs) {
+                    favouritePizza.length = 0;
+
+                    mostPrefs = numPrefs;
                 }
 
-                if(numPreferences == mostPreferences) {
-                    pizzas.push(pizza.name);
-                }
+                if(numPrefs >= mostPrefs && !favouritePizza.includes(pizza.name))
+                    favouritePizza.push(pizza.name);
             }
         });
 
-        if(pizzas.length > 0)
-            pizzaFans.push({ name: friend.name, favoritePizza: pizzas.sort().join(", ") });
+        return { name: friend.name, favouritePizza: favouritePizza.sort().join(", ") };
     });
-
-    return pizzaFans;
 }
 
 function printFriendsForAPizza(pizza, friends) {
-    return;
+    const pizzaFriends = [];
+
+    let mostPrefs = 0;
+
+    friends.forEach(friend => {
+        const isANoGo = pizza.toppings.some(topping => friend.noGos.includes(topping));
+
+        if(!isANoGo) {
+            const numPrefs = friend.preferences.filter(preference => pizza.toppings.includes(preference)).length
+
+            if(numPrefs > mostPrefs) {
+                pizzaFriends.length = 0;
+
+                mostPrefs = numPrefs;
+            }
+
+            if(numPrefs >= mostPrefs && !pizzaFriends.includes(friend.name))
+                pizzaFriends.push(friend.name);
+        }
+    })
+
+    return pizzaFriends.sort().join(", ");
 }
 
-export { printPizzaFans, printFriendsForAPizza, PizzaList };
+export { PizzaList, printPizzaFans, printFriendsForAPizza };
